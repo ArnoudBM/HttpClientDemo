@@ -1,0 +1,10 @@
+@model HttpClientDemo.Models.JokeCount
+ 
+@{
+    ViewData["Title"] = "Random Dad Jokes";
+}
+<h1>@ViewData["Title"]</h1>
+
+<div id="count">
+    <p>Choose from a total of @Model.Body Dad Jokes.</p>
+</div>

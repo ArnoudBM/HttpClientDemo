@@ -1,0 +1,18 @@
+ {
+    "success":true,
+    "body":[{
+        "_id":"60dd362c210923f8d049cb69",
+        "setup":"How do you call a drug dealing cow?",
+        "punchline":"A narcow",
+        "type":"drug",
+        "likes":[],
+        "author":{
+            "name":"unknown",
+            "id":null
+        },
+        "approved":true,
+        "date":1618108661,
+        "NSFW":false,
+        "shareableLink":"https://dadjokes.io/joke/60dd362c210923f8d049cb69"
+    }]
+}

@@ -17,3 +17,5 @@ This project will contain a number of branches for each stage I want to explain:
 - Next up, we use the `IHttpClientFactory` for creating the `HttpClient` for us. This has a number of benefits. 
   For instance, it is resilient against dns changes due to dns TTL expiration, which could change the IP address for the domain name. 
   Another benefit is you can define a typed `Httpclient` that will be used for a specific type that uses the `HttpClient`.
+- The fourth branch contains a typed `HttpClient` implementation as well, but this time it is a *named client* that can be instantiated where neccesary. 
+  The benefit is that this named client can be used in different places, but you could also use different `HttpClient`s in a class without having to inject multiple typed `HttpClient`s.

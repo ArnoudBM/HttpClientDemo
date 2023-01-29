@@ -4,21 +4,25 @@ namespace HttpClientDemo.Clients;
 
 public class JokesClient : IJokesClient
 {
-    private readonly HttpClient _httpClient;
+    private readonly IHttpClientFactory _httpClientFactory;
 
-    public JokesClient(HttpClient httpClient)
+    public JokesClient(IHttpClientFactory httpClientFactory)
     {
-        _httpClient = httpClient;
+        _httpClientFactory = httpClientFactory;
     }
 
     public async Task<JokeCount?> GetCount()
     {
-        return await _httpClient.GetFromJsonAsync<JokeCount?>("joke/count");
+        var client = _httpClientFactory.CreateClient("dadjokesapi");
+
+        return await client.GetFromJsonAsync<JokeCount?>("joke/count");
     }
 
     public async Task<Joke?> GetRandomJoke()
     {
-        return await _httpClient.GetFromJsonAsync<Joke?>("random/joke?nsfw=false");
+        var client = _httpClientFactory.CreateClient("dadjokesapi");
+
+        return await client.GetFromJsonAsync<Joke?>("random/joke?nsfw=false");
     }
 }
 

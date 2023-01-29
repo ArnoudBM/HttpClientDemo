@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IJokesClient, JokesClient>();
-builder.Services.AddHttpClient<IJokesClient, JokesClient>(client =>
+builder.Services.AddHttpClient("dadjokesapi", client =>
 {
     var apiKey = GetApiKey(builder.Configuration);
     var baseAddress = new Uri("https://dad-jokes.p.rapidapi.com");

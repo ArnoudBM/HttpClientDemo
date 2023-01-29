@@ -6,30 +6,26 @@ public class JokesClient : IJokesClient
 {
     private readonly Uri _baseAddress = new Uri("https://dad-jokes.p.rapidapi.com");
     private readonly string _apiKey;
+    private readonly HttpClient _httpClient;
 
     public JokesClient(IConfiguration configuration)
     {
         _apiKey = GetApiKey(configuration);
+
+        _httpClient = new HttpClient();
+        _httpClient.BaseAddress = _baseAddress;
+        _httpClient.DefaultRequestHeaders.Add("X-RapidAPI-Key", _apiKey);
+        _httpClient.DefaultRequestHeaders.Add("X-RapidAPI-Host", _baseAddress.Host);
     }
 
     public async Task<JokeCount?> GetCount()
     {
-        using var httpClient = new HttpClient();
-        httpClient.BaseAddress = _baseAddress;
-        httpClient.DefaultRequestHeaders.Add("X-RapidAPI-Key", _apiKey);
-        httpClient.DefaultRequestHeaders.Add("X-RapidAPI-Host", _baseAddress.Host);
-
-        return await httpClient.GetFromJsonAsync<JokeCount?>("joke/count");
+        return await _httpClient.GetFromJsonAsync<JokeCount?>("joke/count");
     }
 
     public async Task<Joke?> GetRandomJoke()
     {
-        using var httpClient = new HttpClient();
-        httpClient.BaseAddress = _baseAddress;
-        httpClient.DefaultRequestHeaders.Add("X-RapidAPI-Key", _apiKey);
-        httpClient.DefaultRequestHeaders.Add("X-RapidAPI-Host", _baseAddress.Host);
-
-        return await httpClient.GetFromJsonAsync<Joke?>("random/joke?nsfw=false");
+        return await _httpClient.GetFromJsonAsync<Joke?>("random/joke?nsfw=false");
     }
 
     private static string GetApiKey(IConfiguration configuration)

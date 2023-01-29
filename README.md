@@ -10,3 +10,7 @@ Or should we?
 
 This project will contain a number of branches for each stage I want to explain:
 - The main branch contains the initial version of the application that instantiates a separate `HttpClient` for each API call I make.
+- The next branch fixes an improper instantiation antipattern on `HttpClient`: you should instantiate `HttpClient` only once and share it among the sessions.<br/>
+  Simon Timms wrote an article called [You're using HttpClient wrong ant it is destabilizing your software](https://www.aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/) 
+  about this showing that using this pattern, at some point the available sockets the HttpClient can use will be exhausted, causing severe performance issues. 
+  Apart from that, re-using the HttpClient gives you an immediate performance boost.<br/> There's even a [Patterns and Practices document](https://learn.microsoft.com/en-us/azure/architecture/antipatterns/improper-instantiation/) about it on Microsoft Learn.

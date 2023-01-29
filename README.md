@@ -21,3 +21,5 @@ This project will contain a number of branches for each stage I want to explain:
   The benefit is that this named client can be used in different places, but you could also use different `HttpClient`s in a class without having to inject multiple typed `HttpClient`s.
 - Next, we introduce some form of resilience for the HttpClient API call. (And a simulated transient error that appears at random half the time)
   If the call does not succeed, as most http calls might do at some time, retry the call a few times.
+- The last branch uses the Polly package to implement the retry mechanism. This simplifies the code a lot and gives you a lot of options to configure your retry mechanism. 
+  See the [Polly README](https://github.com/App-vNext/Polly#readme) 

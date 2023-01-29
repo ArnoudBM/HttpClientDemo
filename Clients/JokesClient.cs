@@ -1,4 +1,6 @@
 using HttpClientDemo.Models;
+using Polly;
+using Polly.Retry;
 
 namespace HttpClientDemo.Clients;
 
@@ -10,73 +12,43 @@ public class JokesClient : IJokesClient
 
     private readonly IHttpClientFactory _httpClientFactory;
 
+    private readonly AsyncRetryPolicy _retryPolicy;
+
     public JokesClient(IHttpClientFactory httpClientFactory)
     {
         _httpClientFactory = httpClientFactory;
+
+        _retryPolicy = Policy.Handle<HttpRequestException>().RetryAsync(MaxRetries);
     }
 
     public async Task<JokeCount?> GetCount()
     {
         var client = _httpClientFactory.CreateClient("dadjokesapi");
-        var retriesLeft = MaxRetries;
-        JokeCount? result = null;
 
-        while (retriesLeft > 0)
-        { 
-            try
+        return await _retryPolicy.ExecuteAsync(async () => 
+        {
+            if (Random.Next(1, 3) == 1)
             {
-                if (Random.Next(1, 3) == 1)
-                {
-                    throw new HttpRequestException("Simulated API not responding");
-                }
-
-                result = await client.GetFromJsonAsync<JokeCount?>("joke/count");
-
-                break;
+                throw new HttpRequestException("Simulated API not responding");
             }
-            catch (HttpRequestException)
-            {
-                retriesLeft--;
-                if (retriesLeft == 0)
-                {
-                    throw;
-                }
-            }
-        }
 
-        return result;
+            return await client.GetFromJsonAsync<JokeCount?>("joke/count");
+        });
     }
 
     public async Task<Joke?> GetRandomJoke()
     {
         var client = _httpClientFactory.CreateClient("dadjokesapi");
-        var retriesLeft = MaxRetries;
-        Joke? result = null;
 
-        while (retriesLeft > 0)
-        { 
-            try
+        return await _retryPolicy.ExecuteAsync(async () =>
+        {
+            if (Random.Next(1, 3) == 1)
             {
-                if (Random.Next(1, 3) == 1)
-                {
-                    throw new HttpRequestException("Simulated API not responding");
-                }
-
-                result = await client.GetFromJsonAsync<Joke?>("random/joke?nsfw=false");
-
-                break;
+                throw new HttpRequestException("Simulated API not responding");
             }
-            catch (HttpRequestException)
-            {
-                retriesLeft--;
-                if (retriesLeft == 0)
-                {
-                    throw;
-                }
-            }
-        }
 
-        return result;
+            return await client.GetFromJsonAsync<Joke?>("random/joke?nsfw=false");
+        });
    }
 }
 

@@ -5,6 +5,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IJokesClient, JokesClient>();
+builder.Services.AddHttpClient<IJokesClient, JokesClient>(client =>
+{
+    var apiKey = GetApiKey(builder.Configuration);
+    var baseAddress = new Uri("https://dad-jokes.p.rapidapi.com");
+
+    client.BaseAddress = baseAddress;
+    client.DefaultRequestHeaders.Add("X-RapidAPI-Key", apiKey);
+    client.DefaultRequestHeaders.Add("X-RapidAPI-Host", baseAddress.Host);
+});
 
 var app = builder.Build();
 
@@ -28,3 +37,13 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+static string GetApiKey(IConfiguration configuration)
+{
+    var apiKey = configuration["DadJokes:ApiKey"];
+
+    if (apiKey is null)
+        throw new InvalidOperationException("The user secret DadJokes:ApiKey is required.\r\nUse 'dotnet user-secrets init' and 'dotnet user-secrets set \"DadJokes:ApiKey\" \"<your API Key>\"'.");
+
+    return apiKey;
+}

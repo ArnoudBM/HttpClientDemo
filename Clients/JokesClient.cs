@@ -4,18 +4,11 @@ namespace HttpClientDemo.Clients;
 
 public class JokesClient : IJokesClient
 {
-    private readonly Uri _baseAddress = new Uri("https://dad-jokes.p.rapidapi.com");
-    private readonly string _apiKey;
     private readonly HttpClient _httpClient;
 
-    public JokesClient(IConfiguration configuration)
+    public JokesClient(HttpClient httpClient)
     {
-        _apiKey = GetApiKey(configuration);
-
-        _httpClient = new HttpClient();
-        _httpClient.BaseAddress = _baseAddress;
-        _httpClient.DefaultRequestHeaders.Add("X-RapidAPI-Key", _apiKey);
-        _httpClient.DefaultRequestHeaders.Add("X-RapidAPI-Host", _baseAddress.Host);
+        _httpClient = httpClient;
     }
 
     public async Task<JokeCount?> GetCount()
@@ -26,16 +19,6 @@ public class JokesClient : IJokesClient
     public async Task<Joke?> GetRandomJoke()
     {
         return await _httpClient.GetFromJsonAsync<Joke?>("random/joke?nsfw=false");
-    }
-
-    private static string GetApiKey(IConfiguration configuration)
-    {
-        var apiKey = configuration["DadJokes:ApiKey"];
-
-        if (apiKey is null)
-            throw new InvalidOperationException("The user secret DadJokes:ApiKey is required.\r\nUse 'dotnet user-secrets init' and 'dotnet user-secrets set \"DadJokes:ApiKey\" \"<your API Key>\"'.");
-
-        return apiKey;
     }
 }
 

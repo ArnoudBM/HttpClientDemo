@@ -19,3 +19,5 @@ This project will contain a number of branches for each stage I want to explain:
   Another benefit is you can define a typed `Httpclient` that will be used for a specific type that uses the `HttpClient`.
 - The fourth branch contains a typed `HttpClient` implementation as well, but this time it is a *named client* that can be instantiated where neccesary. 
   The benefit is that this named client can be used in different places, but you could also use different `HttpClient`s in a class without having to inject multiple typed `HttpClient`s.
+- Next, we introduce some form of resilience for the HttpClient API call. (And a simulated transient error that appears at random half the time)
+  If the call does not succeed, as most http calls might do at some time, retry the call a few times.

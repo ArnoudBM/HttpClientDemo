@@ -4,6 +4,10 @@ namespace HttpClientDemo.Clients;
 
 public class JokesClient : IJokesClient
 {
+    private const int MaxRetries = 3;
+
+    private static readonly Random Random = new Random();
+
     private readonly IHttpClientFactory _httpClientFactory;
 
     public JokesClient(IHttpClientFactory httpClientFactory)
@@ -14,16 +18,66 @@ public class JokesClient : IJokesClient
     public async Task<JokeCount?> GetCount()
     {
         var client = _httpClientFactory.CreateClient("dadjokesapi");
+        var retriesLeft = MaxRetries;
+        JokeCount? result = null;
 
-        return await client.GetFromJsonAsync<JokeCount?>("joke/count");
+        while (retriesLeft > 0)
+        { 
+            try
+            {
+                if (Random.Next(1, 3) == 1)
+                {
+                    throw new HttpRequestException("Simulated API not responding");
+                }
+
+                result = await client.GetFromJsonAsync<JokeCount?>("joke/count");
+
+                break;
+            }
+            catch (HttpRequestException)
+            {
+                retriesLeft--;
+                if (retriesLeft == 0)
+                {
+                    throw;
+                }
+            }
+        }
+
+        return result;
     }
 
     public async Task<Joke?> GetRandomJoke()
     {
         var client = _httpClientFactory.CreateClient("dadjokesapi");
+        var retriesLeft = MaxRetries;
+        Joke? result = null;
 
-        return await client.GetFromJsonAsync<Joke?>("random/joke?nsfw=false");
-    }
+        while (retriesLeft > 0)
+        { 
+            try
+            {
+                if (Random.Next(1, 3) == 1)
+                {
+                    throw new HttpRequestException("Simulated API not responding");
+                }
+
+                result = await client.GetFromJsonAsync<Joke?>("random/joke?nsfw=false");
+
+                break;
+            }
+            catch (HttpRequestException)
+            {
+                retriesLeft--;
+                if (retriesLeft == 0)
+                {
+                    throw;
+                }
+            }
+        }
+
+        return result;
+   }
 }
 
 public interface IJokesClient
